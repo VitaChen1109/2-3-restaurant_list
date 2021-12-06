@@ -1,8 +1,10 @@
 // require packages used in the project
 const express = require('express')
-const app = express()
-
+const exphbs = require('express-handlebars')
 const mongoose = require('mongoose') // 載入 mongoose
+const Restaurant = require("./models/restaurant")
+
+
 mongoose.connect('mongodb://localhost/restaurant-list')
 
 // 取得資料庫連線狀態
@@ -16,8 +18,8 @@ db.once('open', () => {
   console.log('mongodb connected!')
 })
 
-const exphbs = require('express-handlebars')
-const restaurantList = require('./restaurant.json')
+
+const app = express()
 const port = 3000
 
 
@@ -29,17 +31,23 @@ app.set('view engine', 'handlebars')
 app.use(express.static('public'))
 
 // routes setting
+//瀏覽全部餐廳
 app.get('/', (req, res) => {
-  res.render('index', { restaurants: restaurantList.results })
+  Restaurant.find()
+    .lean()
+    .then(restaurants => res.render("index", { restaurants }))
+    .catch(err => console.log(err))
 })
 
-
+//瀏覽特定一筆餐廳
 app.get('/restaurants/:restaurant_id', (req, res) => {
   const restaurant = restaurantList.results.find(restaurant => restaurant.id.toString() === req.params.restaurant_id)
   res.render('show', restaurant)
 })
 
 
+
+//搜尋餐廳
 app.get('/search', (req, res) => {
   const keyword = req.query.keyword.trim()
   const restaurants = restaurantList.results.filter(restaurant => {
