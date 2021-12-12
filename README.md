@@ -1,7 +1,7 @@
-# 餐廳清單 1.0
+# 餐廳清單 2.0
 ![Index page about Restaurant List](./public/image/restaurant_list.png)
 
-使用 Node.js 與 Express 建立的餐廳清單，可用關鍵字搜尋和查閱餐廳資料
+使用 Node.js 與 Express 建立的餐廳清單，可用關鍵字查閱、新增、修改和刪除餐廳資料。
 
 ## 功能列表
 - 可查看所有餐廳訊息
@@ -46,5 +46,6 @@
 - Font-awesome 5.8.1
 - MongoDB
 - mongoose 6.0.14
+- method-override": 3.0.0
 
 
