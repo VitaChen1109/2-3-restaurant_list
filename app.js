@@ -3,6 +3,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose') // 載入 mongoose
 const Restaurant = require("./models/restaurant")
+const bodyParser = require('body-parser')
 
 
 mongoose.connect('mongodb://localhost/restaurant-list')
@@ -29,6 +30,8 @@ app.set('view engine', 'handlebars')
 
 // Set static files
 app.use(express.static('public'))
+app.use(bodyParser.urlencoded({ extended: true }))
+
 
 // routes setting
 //瀏覽全部餐廳
@@ -39,23 +42,87 @@ app.get('/', (req, res) => {
     .catch(err => console.log(err))
 })
 
-//瀏覽特定一筆餐廳
-app.get('/restaurants/:restaurant_id', (req, res) => {
-  const restaurant = restaurantList.results.find(restaurant => restaurant.id.toString() === req.params.restaurant_id)
-  res.render('show', restaurant)
+//新增餐廳頁面入口
+app.get('/restaurants/new', (req, res) => {
+  res.render('new')
 })
 
 
+app.post("/restaurants", (req, res) => {
+  Restaurant.create(req.body)
+    .then(() => res.redirect("/"))
+    .catch(err => console.log(err))
+})
 
 //搜尋餐廳
 app.get('/search', (req, res) => {
-  const keyword = req.query.keyword.trim()
-  const restaurants = restaurantList.results.filter(restaurant => {
-    return restaurant.name.toLowerCase().includes(keyword.toLowerCase()) || restaurant.category.includes(keyword)
-  })
 
-  res.render('index', { restaurants: restaurants, keyword: keyword })
+
+  const keywords = req.query.keyword.toLowerCase().trim()
+
+  Restaurant.find()
+    .lean()
+    .then(restaurants => {
+      const filteredRestaurant = restaurants.filter(
+        restaurant => restaurant.name.toLowerCase().includes(keywords) ||
+          restaurant.category.toLowerCase().includes(keywords));
+
+      res.render('index', { restaurants: filteredRestaurant, keywords: keywords });
+
+    })
+
+    .catch(err => console.log(err))
 })
+
+
+//瀏覽特定餐廳
+app.get('/restaurants/:restaurant_id', (req, res) => {
+  const id = req.params.restaurant_id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('show', { restaurant }))
+    .catch(error => console.log(error))
+
+
+})
+
+
+//編輯特定餐廳
+app.get('/restaurants/:restaurant_id/edit', (req, res) => {
+  const id = req.params.restaurant_id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('edit', { restaurant }))
+    .catch(error => console.log(error))
+})
+
+app.post('/restaurants/:restaurant_id/edit', (req, res) => {
+  const id = req.params.restaurant_id
+  const edit_res = req.body
+  return Restaurant.findById(id).then(restaurant => {
+    restaurant.name = edit_res.name;
+    restaurant.category = edit_res.category;
+    restaurant.image = edit_res.image;
+    restaurant.location = edit_res.location;
+    restaurant.phone = edit_res.phone;
+    restaurant.google_map = edit_res.google_map;
+    restaurant.rating = edit_res.rating;
+    restaurant.description = edit_res.description;
+    return restaurant.save()
+  }).then(() => {
+    res.redirect(`/restaurants/${id}`)
+  }).catch(error => console.log(error))
+})
+
+// 刪除餐廳
+app.post("/restaurants/:restaurant_id/delete", (req, res) => {
+  const id = req.params.restaurant_id
+  return Restaurant.findById(id)
+    .then(restaurant => restaurant.remove())
+    .then(() => res.redirect("/"))
+    .catch(err => console.log(err))
+})
+
 
 // start and listen on the Express server
 app.listen(port, () => {

@@ -1,0 +1,66 @@
+<h1 class="mb-1 restaurant-show-title">新增餐廳</h1>
+<div class="container">
+  <form action="/restaurants" method="POST">
+    <div class="mb-3">
+      <label for="name" class="form-label">店名<span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="name" placeholder="輸入中文店名" name="name" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="name_en" class="form-label">英文店名<span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="name_en" placeholder="輸入英文店名" name="name_en" required />
+    </div>
+
+
+    <div class="mb-3">
+      <label for="category" class="form-label">分類<span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="category" placeholder="所屬類別" list="categoryOptions" name="category"
+        required />
+      {{! 使用datalist，可下拉選擇或自行輸入類別 }}
+      <datalist id="categoryOptions">
+        <option>美式</option>
+        <option>咖啡</option>
+        <option>中東料理</option>
+        <option>日本料理</option>
+        <option>義式餐廳</option>
+      </datalist>
+    </div>
+    <div class="mb-3">
+      <label for="image" class="form-label">圖片連結<span class="text-danger">*</span></label>
+      <input type="url" class="form-control" id="image" placeholder="圖片參考網址" name="image" required />
+    </div>
+    <div class="mb-3">
+      <label for="location" class="form-label">地址<span class="text-danger">*</span></label>
+      <input type="text" class="form-control" id="location" placeholder="輸入餐廳地址" name="location" required />
+    </div>
+    <div class="mb-3">
+      <label for="phone" class="form-label">電話<span class="text-danger">*</span></label>
+      <input type="tel" class="form-control" id="phone" placeholder="輸入餐廳電話" name="phone" required />
+    </div>
+    <div class="mb-3">
+      <label for="google_map" class="form-label">Google地圖連結<span class="text-danger">*</span></label>
+      <input type="url" class="form-control" id="google_map" placeholder="附上地圖連結" name="google_map" required />
+    </div>
+    <div class="mb-3">
+      <label for="rating" class="form-label">評分<span class="text-danger">*</span></label>
+      <input type="number" class="form-control" id="rating" min="0" max="5" step="0.1" placeholder="0~5分" name="rating"
+        required />
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">補充資訊<span class="text-danger">*</span></label>
+      <textarea class="form-control" id="description" rows="3" name="description" required></textarea>
+    </div>
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary">
+        新增餐廳
+      </button>
+      <a href="/">
+        <button type="button" class="btn btn-outline-secondary">
+          返回首頁
+        </button>
+      </a>
+      {{! 使用type="reset" 可以清除/還原輸入 }}
+      <button type="reset" class="btn btn-outline-danger">重新輸入</button>
+    </div>
+  </form>
+</div>
